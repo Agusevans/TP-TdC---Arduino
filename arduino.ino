@@ -1,37 +1,36 @@
-// Definir los pines
 const int sensorPin = A0; // Pin analógico donde está conectado el sensor de humedad
 const int relayPin = 52; // Pin digital donde está conectado el módulo de relé
 
-// Umbral de humedad para activar/desactivar la bomba
-const int threshold = 500;
+const int threshold = 500; // Umbral de humedad para activar la bomba
+const int bombTime = 3000; // Tiempo de riego de la bomba (ms)
 
 void setup() {
-  // Inicializar el pin del relé como salida
-  pinMode(relayPin, OUTPUT);
-  // Inicializar el pin del sensor de humedad como entrada (opcional)
-  pinMode(sensorPin, INPUT);
+  
+  pinMode(relayPin, OUTPUT); // Inicializar el pin del relé como salida
+  pinMode(sensorPin, INPUT); // Inicializar el pin del sensor de humedad como entrada
 
-  // Inicializar la comunicación serie para la depuración
-  Serial.begin(9600);
+  Serial.begin(9600); // Inicializar la comunicación serie
 }
 
 void loop() {
-  // Leer el valor del sensor de humedad
-  int sensorValue = analogRead(sensorPin);
+  
+  int sensorValue = analogRead(sensorPin); // Leer el valor del sensor de humedad
 
-  // Imprimir el valor del sensor para la depuración
+  // Imprimir el valor del sensor
   Serial.print("Humedad del suelo: ");
   Serial.println(sensorValue);
 
-  // Si el valor del sensor es menor que el umbral, encender la bomba
-  if (sensorValue>=threshold) {
+  // Si el valor del sensor es menor que el umbral, encender la bomba por el tiempo definido
+  if (sensorValue >= threshold) {
+    
     digitalWrite(relayPin, HIGH); 
     Serial.println("Bomba encendida");
-  } else {
+
+    delay(bombTime);
+
     digitalWrite(relayPin, LOW);
     Serial.println("Bomba apagada");
   }
 
-  // Esperar un segundo antes de la siguiente lectura
-  delay(1000);
+  delay(100); // Esperar 100 milisegundos antes de la siguiente lectura
 }
