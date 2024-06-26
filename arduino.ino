@@ -1,8 +1,9 @@
 const int sensorPin = A0; // Pin analógico donde está conectado el sensor de humedad
 const int relayPin = 52; // Pin digital donde está conectado el módulo de relé
 
-const int threshold = 500; // Umbral de humedad para activar la bomba
-const int bombTime = 3000; // Tiempo de riego de la bomba (ms)
+const int umbral = 600; // Umbral de humedad para activar la bomba
+const float kt = 5; // Cte de proporcionalidad de riego
+float tiempoRiego = 1000; // [ms]
 
 void setup() {
   
@@ -14,23 +15,31 @@ void setup() {
 
 void loop() {
   
-  int sensorValue = analogRead(sensorPin); // Leer el valor del sensor de humedad
+  int humedadSensada = analogRead(sensorPin); // Lee el valor del sensor de humedad
 
-  // Imprimir el valor del sensor
   Serial.print("Humedad del suelo: ");
-  Serial.println(sensorValue);
+  Serial.println(humedadSensada);
 
-  // Si el valor del sensor es menor que el umbral, encender la bomba por el tiempo definido
-  if (sensorValue >= threshold) {
+  // Si el valor del sensor es mayor que el umbral (menor humedad que la deseada), encender la bomba
+  if (humedadSensada >= umbral) {
     
+    tiempoRiego = (humedadSensada - umbral) * kt;
+    if(tiempoRiego < 1000){ // tiempo minimo de riego de 1 segundo
+      tiempoRiego = 1000;
+    }
+
     digitalWrite(relayPin, HIGH); 
     Serial.println("Bomba encendida");
 
-    delay(bombTime);
+    Serial.print("Tiempo de riego [s]: ");
+    Serial.println(tiempoRiego/1000);
+    delay(tiempoRiego);
 
     digitalWrite(relayPin, LOW);
     Serial.println("Bomba apagada");
+
+    delay(2000); // Espera 2 segundos a que se moje la tierra
   }
 
-  delay(100); // Esperar 100 milisegundos antes de la siguiente lectura
+  delay(10); // Esperar 10 milisegundos antes de la siguiente lectura
 }
