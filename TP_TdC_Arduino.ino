@@ -2,8 +2,9 @@ const int sensorPin = A0; // Pin analógico donde está conectado el sensor de h
 const int relayPin = 52; // Pin digital donde está conectado el módulo de relé
 
 const int umbral = 600; // Umbral de humedad para activar la bomba
-const float kt = 5; // Cte de proporcionalidad de riego
+const float kt = 10; // Cte de proporcionalidad de riego
 float tiempoRiego = 1000; // [ms]
+float tiempoEspera = 2000; // [ms]
 
 void setup() {
   
@@ -38,7 +39,7 @@ void loop() {
     digitalWrite(relayPin, LOW);
     Serial.println("Bomba apagada");
 
-    delay(2000); // Espera 2 segundos a que se moje la tierra
+    delay(tiempoEspera); // Espera a que se moje la tierra
   }
 
   delay(10); // Esperar 10 milisegundos antes de la siguiente lectura
